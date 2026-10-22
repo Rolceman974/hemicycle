@@ -1,0 +1,84 @@
+# Met à jour les votes chaque samedi (l'export HowTheyVote.eu est publié chaque semaine),
+# l'agenda des prochaines sessions plénières chaque jour, puis publie le site sur GitHub Pages.
+name: Mise à jour et publication
+
+on:
+  schedule:
+    - cron: "17 6 * * 6"   # samedi 6h17 UTC : votes et agenda
+    - cron: "47 5 * * *"   # chaque jour 5h47 UTC : agenda seulement
+  workflow_dispatch: {}      # bouton « Run workflow » pour lancer à la main
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Télécharger l'export HowTheyVote.eu
+        if: github.event_name == 'workflow_dispatch' || github.event.schedule == '17 6 * * 6'
+        run: |
+          curl -sSL -o export.zip https://github.com/HowTheyVote/data/releases/latest/download/export.zip
+          unzip -q export.zip -d export
+
+      - name: Générer les données du site
+        if: github.event_name == 'workflow_dispatch' || github.event.schedule == '17 6 * * 6'
+        run: |
+          node scripts/build-data.js export site/data --term 10
+          node scripts/build-data.js export site/data/t9 --term 9 --main-only
+          node scripts/build-extra.js site/data
+          node scripts/build-extra.js site/data/t9
+
+      # prochaines sessions et ordre du jour provisoire (en cas d'échec, l'ancien fichier est conservé)
+      - name: Mettre à jour l'agenda des sessions plénières
+        if: github.event_name != 'push'
+        continue-on-error: true
+        run: node scripts/build-agenda.js site/data/agenda.json
+
+      - name: Enregistrer les nouvelles données
+        if: github.event_name != 'push'
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@users.noreply.github.com"
+          git add site/data
+          git diff --cached --quiet || git commit -m "Données du $(date +%d/%m/%Y)"
+          git push
+
+      - id: pages
+        uses: actions/configure-pages@v5
+
+      # pages statiques par eurodéputé et par vote (Google, aperçus de partage) + images de partage
+      # adresse publique : variable SITE_URL du dépôt (Settings → Secrets and variables → Actions → Variables),
+      # par ex. https://hemicycle.be ; à défaut, l'adresse donnée par GitHub Pages
+      - name: Générer les pages et les images de partage
+        run: |
+          npm ci --no-audit --no-fund
+          SITE_URL="${{ vars.SITE_URL || steps.pages.outputs.base_url }}" node scripts/build-pages.js site _site
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

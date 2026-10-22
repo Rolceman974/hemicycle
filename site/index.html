@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Hemicycle — comment votent vos eurodéputés</title>
+  <meta name="description" content="Comment votent les eurodéputés ? Présence, votes, fidélité au groupe et résultat de chaque vote nominatif du Parlement européen, expliqués simplement.">
+  <meta property="og:title" content="Hemicycle — comment votent vos eurodéputés">
+  <meta property="og:locale" content="fr_BE">
+  <meta property="og:site_name" content="Hemicycle">
+  <meta property="og:image" content="og-image.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta property="og:description" content="Chaque vote du Parlement européen, eurodéputé par eurodéputé, expliqué simplement.">
+  <meta property="og:type" content="website">
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0f1114" media="(prefers-color-scheme: dark)">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
+  <meta name="apple-mobile-web-app-title" content="Hemicycle">
+  <meta name="application-name" content="Hemicycle">
+  <meta name="format-detection" content="telephone=no">
+  <script>try{var th=localStorage.getItem('hemi-theme');if(th==='light'||th==='dark')document.documentElement.dataset.theme=th}catch(e){}</script>
+  <link rel="icon" href="favicon.svg?v=2" type="image/svg+xml">
+  <link rel="preload" href="fonts/manrope-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/manrope-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="data/meta.json" as="fetch" crossorigin>
+  <link rel="preload" href="data/members.json" as="fetch" crossorigin>
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <script>try{var h=location.hash||'';if((h===''||h==='#'||h==='#/')&&!document.documentElement.getAttribute('data-route')&&!sessionStorage.getItem('hemi-splash')){document.documentElement.classList.add('splash');sessionStorage.setItem('hemi-splash','1')}}catch(e){}</script>
+  <style>.splash-scr{display:none}html.splash .splash-scr{display:flex;position:fixed;inset:0;z-index:200;align-items:center;justify-content:center;background:#0B1F4D;color:#fff}html.splash body{overflow:hidden}</style>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="splash-scr" id="splash" aria-hidden="true">
+    <div class="sp-in">
+      <svg class="sp-mark" viewBox="0 0 64 64" width="132" height="132"><rect class="sp-tile" width="64" height="64" rx="15" fill="#0B1F4D"/><g fill="#F5C400"><circle cx="21" cy="44" r="2.5" style="--i:0"/><circle cx="14.5" cy="44" r="2.5" style="--i:1"/><circle cx="8" cy="44" r="2.5" style="--i:2"/><circle cx="9.17" cy="36.58" r="2.5" style="--i:3"/><circle cx="15.83" cy="37.3" r="2.5" style="--i:4"/><circle cx="22.47" cy="38.5" r="2.5" style="--i:5"/><circle cx="12.58" cy="29.89" r="2.5" style="--i:6"/><circle cx="19.63" cy="31.63" r="2.5" style="--i:7"/><circle cx="17.89" cy="24.58" r="2.5" style="--i:8"/><circle cx="26.5" cy="34.47" r="2.5" style="--i:9"/><circle cx="25.3" cy="27.83" r="2.5" style="--i:10"/><circle cx="24.58" cy="21.17" r="2.5" style="--i:11"/><circle cx="32" cy="33" r="2.5" style="--i:12"/><circle cx="32" cy="26.5" r="2.5" style="--i:13"/><circle cx="32" cy="20" r="2.5" style="--i:14"/><circle cx="39.42" cy="21.17" r="2.5" style="--i:15"/><circle cx="38.7" cy="27.83" r="2.5" style="--i:16"/><circle cx="37.5" cy="34.47" r="2.5" style="--i:17"/><circle cx="46.11" cy="24.58" r="2.5" style="--i:18"/><circle cx="44.37" cy="31.63" r="2.5" style="--i:19"/><circle cx="51.42" cy="29.89" r="2.5" style="--i:20"/><circle cx="41.53" cy="38.5" r="2.5" style="--i:21"/><circle cx="48.17" cy="37.3" r="2.5" style="--i:22"/><circle cx="54.83" cy="36.58" r="2.5" style="--i:23"/><circle cx="43" cy="44" r="2.5" style="--i:24"/><circle cx="49.5" cy="44" r="2.5" style="--i:25"/><circle cx="56" cy="44" r="2.5" style="--i:26"/></g></svg>
+      <div class="sp-name">Hemicycle</div>
+      <div class="sp-tag" id="sp-tag">Les votes du Parlement européen</div>
+      <div class="sp-bar"><i></i></div>
+    </div>
+  </div>
+  <script>window.__spT=performance.now();try{if(document.documentElement.classList.contains('splash')){var L=localStorage.getItem('hemi-lang')||'';if(!L){var n=((navigator.languages&&navigator.languages[0])||navigator.language||'').toLowerCase();L=n.indexOf('fr')===0?'fr':n.indexOf('nl')===0?'nl':'en'}document.getElementById('sp-tag').textContent={fr:'Les votes du Parlement européen',nl:'De stemmingen van het Europees Parlement',en:'Votes in the European Parliament'}[L]||'Votes in the European Parliament'}}catch(e){}</script>
+  <a class="skip" href="#main">Aller au contenu</a>
+
+  <header class="masthead">
+    <div class="wrap masthead-row">
+      <a class="wordmark" href="#/" aria-label="Hemicycle, home">
+        <svg viewBox="0 0 64 64" width="36" height="36" aria-hidden="true" class="mark"><rect width="64" height="64" rx="15" fill="#0B1F4D"/><circle cx="21" cy="44" r="2.5" fill="#F5C400"/><circle cx="22.47" cy="38.5" r="2.5" fill="#F5C400"/><circle cx="26.5" cy="34.47" r="2.5" fill="#F5C400"/><circle cx="32" cy="33" r="2.5" fill="#F5C400"/><circle cx="37.5" cy="34.47" r="2.5" fill="#F5C400"/><circle cx="41.53" cy="38.5" r="2.5" fill="#F5C400"/><circle cx="43" cy="44" r="2.5" fill="#F5C400"/><circle cx="14.5" cy="44" r="2.5" fill="#F5C400"/><circle cx="15.83" cy="37.3" r="2.5" fill="#F5C400"/><circle cx="19.63" cy="31.63" r="2.5" fill="#F5C400"/><circle cx="25.3" cy="27.83" r="2.5" fill="#F5C400"/><circle cx="32" cy="26.5" r="2.5" fill="#F5C400"/><circle cx="38.7" cy="27.83" r="2.5" fill="#F5C400"/><circle cx="44.37" cy="31.63" r="2.5" fill="#F5C400"/><circle cx="48.17" cy="37.3" r="2.5" fill="#F5C400"/><circle cx="49.5" cy="44" r="2.5" fill="#F5C400"/><circle cx="8" cy="44" r="2.5" fill="#F5C400"/><circle cx="9.17" cy="36.58" r="2.5" fill="#F5C400"/><circle cx="12.58" cy="29.89" r="2.5" fill="#F5C400"/><circle cx="17.89" cy="24.58" r="2.5" fill="#F5C400"/><circle cx="24.58" cy="21.17" r="2.5" fill="#F5C400"/><circle cx="32" cy="20" r="2.5" fill="#F5C400"/><circle cx="39.42" cy="21.17" r="2.5" fill="#F5C400"/><circle cx="46.11" cy="24.58" r="2.5" fill="#F5C400"/><circle cx="51.42" cy="29.89" r="2.5" fill="#F5C400"/><circle cx="54.83" cy="36.58" r="2.5" fill="#F5C400"/><circle cx="56" cy="44" r="2.5" fill="#F5C400"/></svg>
+        <span>Hemicycle</span>
+      </a>
+      <div class="term-menu" id="term-menu">
+        <button type="button" class="term-btn" id="term-btn" aria-haspopup="true" aria-expanded="false" aria-controls="term-list"><span id="term-cur">2024–2029</span><svg class="caret" viewBox="0 0 12 12" aria-hidden="true"><path d="m3 4.5 3 3 3-3"/></svg></button>
+        <div class="term-list" id="term-list" hidden></div>
+      </div>
+      <form class="search" id="search-form" role="search" autocomplete="off">
+        <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5"/><path d="m13 13 4.5 4.5"/></svg>
+        <label class="sr" for="q" data-i18n="searchLabel">Rechercher un eurodéputé ou un vote</label>
+        <input id="q" type="search" placeholder="Un eurodéputé, un sujet de vote…" data-i18n-ph="searchPh" spellcheck="false">
+        <div class="search-results" id="search-results" hidden></div>
+      </form>
+      <a class="fw-link" id="fw-link" href="#/suivi" aria-label="Mon suivi"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="m10 2.8 2.2 4.6 5 .7-3.6 3.5.9 5-4.5-2.4-4.5 2.4.9-5L2.8 8.1l5-.7z"/></svg><span class="fw-n" hidden></span></a>
+      <button type="button" class="theme-btn" id="theme-btn" aria-label="Theme"><svg class="i-moon" viewBox="0 0 20 20" aria-hidden="true"><path d="M16.5 12.2A7 7 0 0 1 7.8 3.5a7 7 0 1 0 8.7 8.7Z"/></svg><svg class="i-sun" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="3.6"/><path d="M10 1.8v2.1M10 16.1v2.1M1.8 10h2.1M16.1 10h2.1M4.2 4.2l1.5 1.5M14.3 14.3l1.5 1.5M4.2 15.8l1.5-1.5M14.3 5.7l1.5-1.5"/></svg></button>
+      <div class="lang-menu" id="lang-menu">
+        <button type="button" class="lang-btn" id="lang-btn" aria-haspopup="true" aria-expanded="false" aria-controls="lang-list" data-i18n-aria="langLabel" aria-label="Language"></button>
+        <ul class="lang-list" id="lang-list" hidden>
+          <li><button type="button" data-lang="en" lang="en"></button></li>
+          <li><button type="button" data-lang="fr" lang="fr"></button></li>
+          <li><button type="button" data-lang="nl" lang="nl"></button></li>
+        </ul>
+      </div>
+    </div>
+    <nav class="wrap mainnav" aria-label="Sections">
+      <a href="#/deputes" data-nav="deputes" data-i18n="navMeps">Eurodéputés</a>
+      <a href="#/votes" data-nav="votes" data-i18n="navVotes">Votes</a>
+      <a href="#/themes" data-nav="themes" data-i18n="navThemes">Thèmes</a>
+      <a href="#/groupes" data-nav="groupes" data-i18n="navGroups">Groupes politiques</a>
+      <a href="#/pays" data-nav="pays" data-i18n="navCountriesParties">Pays et partis</a>
+      <a href="#/guide" data-nav="guide" class="nav-end" data-i18n="navUnderstand">Le Parlement expliqué</a>
+    </nav>
+  </header>
+
+  <main id="main" class="wrap" tabindex="-1">
+    <p class="loading">Chargement des données…</p>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap footer-top">
+      <a class="f-logo" href="#/" aria-label="Hemicycle"><svg viewBox="0 0 64 64" width="40" height="40" aria-hidden="true" class="mark"><rect width="64" height="64" rx="15" fill="#0B1F4D"/><circle cx="21" cy="44" r="2.5" fill="#F5C400"/><circle cx="22.47" cy="38.5" r="2.5" fill="#F5C400"/><circle cx="26.5" cy="34.47" r="2.5" fill="#F5C400"/><circle cx="32" cy="33" r="2.5" fill="#F5C400"/><circle cx="37.5" cy="34.47" r="2.5" fill="#F5C400"/><circle cx="41.53" cy="38.5" r="2.5" fill="#F5C400"/><circle cx="43" cy="44" r="2.5" fill="#F5C400"/><circle cx="14.5" cy="44" r="2.5" fill="#F5C400"/><circle cx="15.83" cy="37.3" r="2.5" fill="#F5C400"/><circle cx="19.63" cy="31.63" r="2.5" fill="#F5C400"/><circle cx="25.3" cy="27.83" r="2.5" fill="#F5C400"/><circle cx="32" cy="26.5" r="2.5" fill="#F5C400"/><circle cx="38.7" cy="27.83" r="2.5" fill="#F5C400"/><circle cx="44.37" cy="31.63" r="2.5" fill="#F5C400"/><circle cx="48.17" cy="37.3" r="2.5" fill="#F5C400"/><circle cx="49.5" cy="44" r="2.5" fill="#F5C400"/><circle cx="8" cy="44" r="2.5" fill="#F5C400"/><circle cx="9.17" cy="36.58" r="2.5" fill="#F5C400"/><circle cx="12.58" cy="29.89" r="2.5" fill="#F5C400"/><circle cx="17.89" cy="24.58" r="2.5" fill="#F5C400"/><circle cx="24.58" cy="21.17" r="2.5" fill="#F5C400"/><circle cx="32" cy="20" r="2.5" fill="#F5C400"/><circle cx="39.42" cy="21.17" r="2.5" fill="#F5C400"/><circle cx="46.11" cy="24.58" r="2.5" fill="#F5C400"/><circle cx="51.42" cy="29.89" r="2.5" fill="#F5C400"/><circle cx="54.83" cy="36.58" r="2.5" fill="#F5C400"/><circle cx="56" cy="44" r="2.5" fill="#F5C400"/></svg><span>Hemicycle</span></a>
+      <div class="footer-grid">
+      <nav class="f-col" aria-labelledby="f-explore">
+        <h2 id="f-explore" data-i18n="footExplore">Explorer</h2>
+        <a href="#/deputes" data-i18n="navMeps">Eurodéputés</a>
+        <a href="#/votes" data-i18n="navVotes">Votes</a>
+        <a href="#/themes" data-i18n="navThemes">Thèmes</a>
+        <a href="#/groupes" data-i18n="navGroups">Groupes politiques</a>
+        <a href="#/pays" data-i18n="navCountriesParties">Pays et partis</a>
+      </nav>
+      <nav class="f-col" aria-labelledby="f-tools">
+        <h2 id="f-tools" data-i18n="footTools">Outils</h2>
+        <a href="#/sessions" data-i18n="hubTitle">Sessions plénières</a>
+        <a href="#/quiz" data-i18n="qzTitle">Qui me ressemble ?</a>
+        <a href="#/suivi" data-i18n="fwTitle">Mon suivi</a>
+        <a href="#/comparer" data-i18n="footCompare">Comparer des eurodéputés</a>
+        <a href="#/archive" data-i18n="navArchive">Archives</a>
+        <a href="#" data-install hidden data-i18n="installApp">Installer l’application</a>
+      </nav>
+      <nav class="f-col" aria-labelledby="f-about">
+        <h2 id="f-about" data-i18n="footAboutL">À propos</h2>
+        <a href="#/a-propos" data-i18n="footProject">Le projet</a>
+        <a href="#/a-propos?s=methode" data-i18n="footMethod">Méthode</a>
+        <a href="#/a-propos?s=sources" data-i18n="footSourcesL">Sources et licences</a>
+        <a href="#/a-propos?s=vie-privee" data-i18n="footPrivacy">Vie privée</a>
+        <a href="#/a-propos?s=mentions" data-i18n="footLegal">Mentions légales</a>
+        <a href="#" id="f-contact" hidden data-i18n="footContact">Contact</a>
+      </nav>
+      </div>
+    </div>
+    <div class="wrap">
+      <div class="footer-base">
+        <span><span class="f-copy">© 2026 Hemicycle</span> · <span data-i18n="footIndep">Site indépendant, non affilié au Parlement européen ni à aucun parti politique</span></span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="i18n.js"></script>
+  <script src="groups-info.js"></script>
+  <script src="groups-old.js"></script>
+  <script src="explain.js"></script>
+  <script src="themes.js"></script>
+  <script src="guide.js"></script>
+  <script src="about.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

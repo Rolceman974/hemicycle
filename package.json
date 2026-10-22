@@ -1,0 +1,17 @@
+{
+  "name": "hemicycle",
+  "private": true,
+  "description": "Hemicycle — les votes nominatifs du Parlement européen, eurodéputé par eurodéputé",
+  "scripts": {
+    "data": "node scripts/build-data.js export site/data --term 10 && node scripts/build-data.js export site/data/t9 --term 9 --main-only && node scripts/build-extra.js site/data && node scripts/build-extra.js site/data/t9",
+    "pages": "node scripts/build-pages.js site _site",
+    "serve": "node serve.js"
+  },
+  "dependencies": {
+    "@expo-google-fonts/manrope": "^0.4.2",
+    "@resvg/resvg-js": "^2.6.2"
+  },
+  "devDependencies": {
+    "esbuild": "^0.24.2"
+  }
+}

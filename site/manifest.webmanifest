@@ -1,0 +1,28 @@
+{
+  "id": "./",
+  "name": "Hemicycle — les votes du Parlement européen",
+  "short_name": "Hemicycle",
+  "description": "Chaque vote du Parlement européen, expliqué simplement, eurodéputé par eurodéputé.",
+  "lang": "fr",
+  "dir": "ltr",
+  "start_url": "./?source=app",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "any",
+  "background_color": "#0B1F4D",
+  "theme_color": "#0B1F4D",
+  "categories": ["news", "politics", "education"],
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+    { "src": "favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ],
+  "shortcuts": [
+    { "name": "Eurodéputés", "short_name": "Eurodéputés", "url": "./#/deputes", "icons": [{ "src": "icon-192.png", "sizes": "192x192" }] },
+    { "name": "Derniers votes", "short_name": "Votes", "url": "./#/votes", "icons": [{ "src": "icon-192.png", "sizes": "192x192" }] },
+    { "name": "Prochaine session", "short_name": "Sessions", "url": "./#/sessions?s=prochaine", "icons": [{ "src": "icon-192.png", "sizes": "192x192" }] },
+    { "name": "Pays et partis", "short_name": "Pays", "url": "./#/pays", "icons": [{ "src": "icon-192.png", "sizes": "192x192" }] }
+  ]
+}
