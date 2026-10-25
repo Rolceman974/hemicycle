@@ -1748,6 +1748,8 @@
           <p class="stage-sub">${t('stageSub', active.length, groups.length, countries.length)}</p>`}
         </div>
         <div class="stage-controls">
+          <label class="sr" for="hl-country">${t('hlCountry')}</label>
+          <select id="hl-country"><option value="">${t('hlCountry')}</option>${countries.map((c) => `<option value="${c}">${esc(cName(c))}</option>`).join('')}</select>
           <div class="chips" role="group" aria-label="${esc(t('hlGroup'))}">
             ${groups.map((g) => `<button type="button" class="chip" data-hl-group="${g}" aria-pressed="false"><i style="background:${gColor(g)}"></i>${esc(gShort(g))} <b>${active.filter((x) => x.g === g).length}</b></button>`).join('')}
           </div>
