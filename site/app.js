@@ -1759,11 +1759,6 @@
           <div class="stage-hemi">${hemicycle(active.map((x) => ({ color: gColor(x.g), title: `${fullName(x)} · ${gShort(x.g)} · ${cName(x.c)}`, m: x })), `<b id="hl-count">${active.length}</b><span id="hl-label">${t('centerMeps')}</span>`, 'big')}</div>
         </div>
         ${archived() ? `<p class="stage-hint">${t('clickSeat')}</p>` : ''}
-        <div class="stage-figures">
-          <div class="fig"><b>${fmt(m.counts.votes)}</b><span>${t('figVotes')}</span></div>
-          <div class="fig"><b>${fmt(m.counts.main)}</b><span>${t('figMain')}</span></div>
-          <div class="fig"><b>${pct(D.avg.att)}</b><span>${t('figAtt')}</span></div>
-        </div>
       </section>
       ${archived() ? splitHtml : ''}`;
 
