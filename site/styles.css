@@ -1750,3 +1750,5 @@ details[open] > :not(summary) { animation: rise .28s cubic-bezier(.2, .7, .2, 1)
 .btn.report:hover { color: var(--ink); }
 .btn.report svg { flex: none; }
 .vrow .vt-k { color: var(--muted); font-weight: 600; }
+.rj-note { margin: 10px 0 14px; padding: 10px 14px; background: var(--soft); border-radius: 8px; font-size: 15px; color: var(--ink-2); }
+.rj-note a { font-weight: 600; }

@@ -106,6 +106,15 @@
           v.tf = titles[v.ti] || null;
           v.key = norm(`${v.ti} ${v.tf ? v.tf.join(' ') : ''} ${v.pt || ''} ${v.ref || ''} ${v.pr || ''} ${v.tp ? v.tp.join(' ') : ''}`);
         });
+        // demandes de rejet : quand le texte a ensuite été voté le même jour, la demande est rattachée à ce vote
+        // et ne compte plus comme un « vote final » à part (sinon le même texte apparaît deux fois dans les listes)
+        const mainOf = new Map();
+        for (const v of votes) if (v.mn && v.pr && EX.kind(v).k !== 'reject') mainOf.set(`${v.pr}|${v.t.slice(0, 10)}`, v);
+        for (const v of votes) {
+          if (!v.mn || !v.pr || EX.kind(v).k !== 'reject') continue;
+          const m = mainOf.get(`${v.pr}|${v.t.slice(0, 10)}`);
+          if (m) { m.rj = v; v.rjOf = m; v.mn = 0; }
+        }
         return votes;
       });
     }
@@ -522,7 +531,7 @@
     return `<a class="vrow" href="#/${TP()}vote/${v.id}">
       <div class="vd"><b>${esc(new Date(v.t).toLocaleDateString(loc(), { day: 'numeric', month: 'short' }))}</b>${new Date(v.t).getFullYear()}</div>
       <div><div class="vt">${EX.kind(v).k === 'reject' ? `<span class="vt-k">${esc(EX[lang].short.reject)}${lang === 'fr' ? ' :' : ':'}</span> ` : ''}${esc(tiOf(v))}</div>${extraTopic(v) ? `<div class="vtp">${esc(cap(extraTopic(v)))}</div>` : ''}
-        <div class="vs">${v.dt && v.mn ? `<span class="tag tag-dt">${t('detailedTag')}</span>` : ''}${shortLabel(v) && EX.kind(v).k !== 'reject' ? `<span>${esc(shortLabel(v))}</span>` : ''}${extra}</div></div>
+        <div class="vs">${v.dt && v.mn ? `<span class="tag tag-dt">${t('detailedTag')}</span>` : ''}${shortLabel(v) && EX.kind(v).k !== 'reject' ? `<span>${esc(shortLabel(v))}</span>` : ''}${v.rj ? `<span>${t('rjBefore', v.rj.c[0], v.rj.c[1], resultOf(v.rj) === 'REJECTED')}</span>` : ''}${extra}</div></div>
       <div class="vr"><span class="res ${r}">${resName(r)}</span>${bar([v.c[0], v.c[1], v.c[2]])}<span class="small muted">${v.c[0]} – ${v.c[1]} – ${v.c[2]}</span></div>
     </a>`;
   }
@@ -2311,6 +2320,8 @@
       <div class="vote-head">
         <div>
           <h1 class="h1">${esc(tiOf(v))}</h1>
+          ${v.rjOf ? `<p class="rj-note">${t('rjIsMotion')} <a href="#/${TP()}vote/${v.rjOf.id}">${t('rjSeeText', resName(resultOf(v.rjOf)).toLowerCase(), v.rjOf.c[0], v.rjOf.c[1])} →</a></p>` : ''}
+          ${v.rj ? `<p class="rj-note">${t('rjBeforeLong', v.rj.c[0], v.rj.c[1], resultOf(v.rj) === 'REJECTED')} <a href="#/${TP()}vote/${v.rj.id}">${t('rjSeeMotion')} →</a></p>` : ''}
           ${tiOf(v) !== v.ti ? `<p class="small muted ti-off">${t('officialTitle')} : <span lang="en">${esc(v.ti)}</span></p>` : ''}
           ${v.pt && lang === 'en' && norm(v.pt) !== norm(v.ti) ? `<p class="lede">${esc(v.pt)}</p>` : ''}
           ${explainVote(v, file.g)}
@@ -2326,7 +2337,7 @@
         </div>
         <div class="verdict">
           <div class="kicker">${t('resultLabel')}</div>
-          <div class="big ${r}">${resName(r)}</div>
+          <div class="big ${r}">${EX.kind(v).k === 'reject' ? t('rjVerdict', r === 'REJECTED') : resName(r)}</div>
           ${bar(v.c, true)}
           <div class="tally">
             <div class="f"><b>${v.c[0]}</b><span>${posName('F')}</span></div>

@@ -22,7 +22,7 @@ window.HEMI_I18N = (() => {
     langName: { fr: 'français', en: 'anglais', nl: 'néerlandais' },
     inLang: { fr: '(en français)', en: '(en anglais)', nl: '(en néerlandais)' },
 
-    amendment: 'Amendement', finalVote: 'Vote final', reportError: 'Signaler une erreur', reportSubject: (x) => `Erreur sur Hemicycle : ${x}`, reportBody: (u, ti) => `Bonjour,\n\nJ’ai repéré une erreur sur cette page :\n${u}\n(${ti})\n\nCe qui ne va pas :\n\n`, officialTitle: 'Intitulé officiel (anglais)', finalVotes: 'Votes finaux', finalVotesLc: 'votes finaux',
+    amendment: 'Amendement', finalVote: 'Vote final', rjBefore: (f, a, ko) => `Demande de rejet ${ko ? 'repoussée' : 'adoptée'} juste avant (${f} – ${a})`, rjBeforeLong: (f, a, ko) => `Juste avant ce vote, les eurodéputés ont ${ko ? 'repoussé' : 'adopté'} une demande de rejet du texte entier (${f} pour, ${a} contre).`, rjSeeMotion: 'Voir ce vote', rjVerdict: (ko) => (ko ? 'Demande rejetée' : 'Demande adoptée'), rjIsMotion: 'Ce vote ne portait pas sur le texte lui-même, mais sur une demande de le rejeter en entier.', rjSeeText: (r, f, a) => `Voir le vote sur le texte (${r}, ${f} – ${a})`, reportError: 'Signaler une erreur', reportSubject: (x) => `Erreur sur Hemicycle : ${x}`, reportBody: (u, ti) => `Bonjour,\n\nJ’ai repéré une erreur sur cette page :\n${u}\n(${ti})\n\nCe qui ne va pas :\n\n`, officialTitle: 'Intitulé officiel (anglais)', finalVotes: 'Votes finaux', finalVotesLc: 'votes finaux',
     barLabel: (c) => `${c[0]} pour, ${c[1]} contre, ${c[2]} abstentions${c[3] != null ? `, ${c[3]} n’ont pas voté` : ''}`,
     hemiAria: 'Hémicycle : cliquez sur un siège pour voir l’eurodéputé',
     drawerAria: 'Fiche de l’eurodéputé', close: 'Fermer', formerMandate: 'ancien mandat',
@@ -174,7 +174,7 @@ window.HEMI_I18N = (() => {
     langName: { fr: 'French', en: 'English', nl: 'Dutch' },
     inLang: { fr: '(in French)', en: '(in English)', nl: '(in Dutch)' },
 
-    amendment: 'Amendment', finalVote: 'Final vote', reportError: 'Report an error', reportSubject: (x) => `Error on Hemicycle: ${x}`, reportBody: (u, ti) => `Hello,\n\nI noticed an error on this page:\n${u}\n(${ti})\n\nWhat is wrong:\n\n`, officialTitle: 'Official title', finalVotes: 'Final votes', finalVotesLc: 'final votes',
+    amendment: 'Amendment', finalVote: 'Final vote', rjBefore: (f, a, ko) => `Motion to reject ${ko ? 'defeated' : 'adopted'} just before (${f} – ${a})`, rjBeforeLong: (f, a, ko) => `Just before this vote, MEPs ${ko ? 'defeated' : 'adopted'} a motion to reject the whole text (${f} for, ${a} against).`, rjSeeMotion: 'See that vote', rjVerdict: (ko) => (ko ? 'Motion defeated' : 'Motion adopted'), rjIsMotion: 'This vote was not on the text itself, but on a motion to reject it entirely.', rjSeeText: (r, f, a) => `See the vote on the text (${r}, ${f} – ${a})`, reportError: 'Report an error', reportSubject: (x) => `Error on Hemicycle: ${x}`, reportBody: (u, ti) => `Hello,\n\nI noticed an error on this page:\n${u}\n(${ti})\n\nWhat is wrong:\n\n`, officialTitle: 'Official title', finalVotes: 'Final votes', finalVotesLc: 'final votes',
     barLabel: (c) => `${c[0]} for, ${c[1]} against, ${c[2]} abstentions${c[3] != null ? `, ${c[3]} did not vote` : ''}`,
     hemiAria: 'Hemicycle: click a seat to see the MEP',
     drawerAria: 'MEP profile', close: 'Close', formerMandate: 'former MEP',
@@ -314,7 +314,7 @@ window.HEMI_I18N = (() => {
     langName: { fr: 'het Frans', en: 'het Engels', nl: 'het Nederlands' },
     inLang: { fr: '(in het Frans)', en: '(in het Engels)', nl: '(in het Nederlands)' },
 
-    amendment: 'Amendement', finalVote: 'Eindstemming', reportError: 'Een fout melden', reportSubject: (x) => `Fout op Hemicycle: ${x}`, reportBody: (u, ti) => `Hallo,\n\nIk zag een fout op deze pagina:\n${u}\n(${ti})\n\nWat er niet klopt:\n\n`, officialTitle: 'Officiële titel (Engels)', finalVotes: 'Eindstemmingen', finalVotesLc: 'eindstemmingen',
+    amendment: 'Amendement', finalVote: 'Eindstemming', rjBefore: (f, a, ko) => `Verwerpingsvoorstel net daarvoor ${ko ? 'verworpen' : 'aangenomen'} (${f} – ${a})`, rjBeforeLong: (f, a, ko) => `Net voor deze stemming hebben de leden een voorstel om de hele tekst te verwerpen ${ko ? 'verworpen' : 'aangenomen'} (${f} voor, ${a} tegen).`, rjSeeMotion: 'Bekijk die stemming', rjVerdict: (ko) => (ko ? 'Voorstel verworpen' : 'Voorstel aangenomen'), rjIsMotion: 'Deze stemming ging niet over de tekst zelf, maar over een voorstel om hem volledig te verwerpen.', rjSeeText: (r, f, a) => `Bekijk de stemming over de tekst (${r}, ${f} – ${a})`, reportError: 'Een fout melden', reportSubject: (x) => `Fout op Hemicycle: ${x}`, reportBody: (u, ti) => `Hallo,\n\nIk zag een fout op deze pagina:\n${u}\n(${ti})\n\nWat er niet klopt:\n\n`, officialTitle: 'Officiële titel (Engels)', finalVotes: 'Eindstemmingen', finalVotesLc: 'eindstemmingen',
     barLabel: (c) => `${c[0]} voor, ${c[1]} tegen, ${c[2]} onthoudingen${c[3] != null ? `, ${c[3]} niet gestemd` : ''}`,
     hemiAria: 'Halfrond: klik op een zetel om het parlementslid te zien',
     drawerAria: 'Profiel van het parlementslid', close: 'Sluiten', formerMandate: 'voormalig lid',
