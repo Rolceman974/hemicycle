@@ -165,7 +165,7 @@
   // couleurs propres des partis nationaux (législature actuelle) ; sinon la couleur du groupe européen
   const PARTY_COLORS = {
     AUT: { 'FPÖ': '#005DA8', 'ÖVP': '#63C3D0', 'SPÖ': '#E31E2D', NEOS: '#E84188', 'Die Grünen': '#88B626' },
-    BEL: { MR: '#0047AB', PS: '#E2001A', LesEng: '#00B2A9', ECOLO: '#3AAA35', 'PVDA-PTB': '#A3001E', CSP: '#F28C00', 'Vlaams Belang': '#FFE500', 'N-VA': '#F5B800', 'CD&V': '#FF7F00', Vooruit: '#FF2900', GROEN: '#83C341', Anders: '#0087DC' },
+    BEL: { MR: '#0047AB', PS: '#E2001A', 'Les Engagés': '#00B2A9', LesEng: '#00B2A9', ECOLO: '#3AAA35', 'PVDA-PTB': '#A3001E', CSP: '#F28C00', 'Vlaams Belang': '#FFE500', 'N-VA': '#F5B800', 'CD&V': '#FF7F00', Vooruit: '#FF2900', GROEN: '#83C341', Anders: '#0087DC' },
     BGR: { GERB: '#0054A6', DPS: '#0072BC', BSP: '#DB0F28' },
     CYP: { 'DI.SY.': '#1569C7', 'AKEL-ARISTERA-ND': '#C00000' },
     CZE: { 'ANO 2011': '#261060', ODS: '#004494', 'TOP09/STAN': '#7C0C7F', PIR: '#1A1A1A', 'KSČM': '#CC0000', 'KDU-ČSL': '#F7C600' },
@@ -1485,7 +1485,7 @@
       else if (p0 === 'pays' && p1) await pageCountry(my, p1);
       else if (p0 === 'pays') await pageCountries(my);
       else if (p0 === 'guide' && !archived()) pageGuide();
-      else if (p0 === 'parti' && p1) await pageParty(my, decodeURIComponent(p1));
+      else if (p0 === 'parti' && p1) await pageParty(my, decodeURIComponent(p1).replace(/~LesEng$/, '~Les Engagés'));
       else if (p0 === 'session' && p1) await pageSession(my, p1);
       else if (p0 === 'partis') await pagePartiesIndex(my);
       else if (p0 === 'sessions') await pageSessions(my, q);
@@ -3527,7 +3527,7 @@
 
   /* ================================================================ la Belgique au Parlement */
   // les 22 sièges belges sont élus dans trois collèges : francophone (8), néerlandophone (13), germanophone (1)
-  const BE_COLL = { FR: ['MR', 'PS', 'LesEng', 'ECOLO', 'PVDA-PTB', 'DéFI', 'cdH'], NL: ['Vlaams Belang', 'CD&V', 'N-VA', 'Vooruit', 'GROEN', 'Anders', 'Open Vld', 'sp.a'], DE: ['CSP'] };
+  const BE_COLL = { FR: ['MR', 'PS', 'Les Engagés', 'LesEng', 'ECOLO', 'PVDA-PTB', 'DéFI', 'cdH'], NL: ['Vlaams Belang', 'CD&V', 'N-VA', 'Vooruit', 'GROEN', 'Anders', 'Open Vld', 'sp.a'], DE: ['CSP'] };
   const BE_BY_ID = { 256890: 'NL', 187917: 'FR' }; // Rudi Kennes (liste PVDA, collège néerlandophone) ; Marc Botenga (PTB, collège francophone)
   const beColl = (m) => BE_BY_ID[m.id] || Object.keys(BE_COLL).find((k) => BE_COLL[k].includes(m.p)) || null;
   async function pageBelgium(my) {

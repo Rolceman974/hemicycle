@@ -15,6 +15,8 @@
  * Aucune dépendance : Node 18+.
  */
 
+// abréviations officielles peu lisibles remplacées par le nom courant du parti
+const PARTY_SHORT = { LesEng: 'Les Engagés' };
 const fs = require('fs');
 const path = require('path');
 
@@ -164,7 +166,7 @@ async function main() {
       id: Number(m.id), fn: m.first_name, ln: m.last_name, c: m.country_code,
       g: current ? current.group_code : 'NI',
       gh: memberships.length > 1 ? memberships.map((x) => ({ g: x.group_code, s: x.start_date, e: x.end_date || null })) : undefined,
-      p: party ? party.short_label : null, pl: party ? party.label : null,
+      p: party ? (PARTY_SHORT[party.short_label] || party.short_label) : null, pl: party ? party.label : null,
       dob: m.date_of_birth || null, a: active,
       since: memberships[0] ? memberships[0].start_date : null,
       until: active ? null : (current && current.end_date) || null,
