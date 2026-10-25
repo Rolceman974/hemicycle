@@ -1754,3 +1754,11 @@ details[open] > :not(summary) { animation: rise .28s cubic-bezier(.2, .7, .2, 1)
 .rj-note a { font-weight: 600; }
 main:has(.home-hero) { padding-bottom: 28px; }
 main:has(.home-hero) + .footer { margin-top: 48px; }
+.week-next { position: relative; overflow: hidden; }
+.week-next > * { position: relative; z-index: 1; }
+.week-next .wk-art { position: absolute; z-index: 0; right: 18px; bottom: 14px; width: 250px; height: auto; color: #fff; opacity: .16; pointer-events: none; }
+.wk-prog { margin-top: 18px; max-width: 72%; }
+.wk-prog ul { margin: 0; padding: 0; list-style: none; }
+.wk-prog li { position: relative; padding: 0 0 6px 16px; font-size: 14.5px; line-height: 1.4; color: rgba(255, 255, 255, .9); }
+.wk-prog li::before { content: ""; position: absolute; left: 0; top: 7px; width: 6px; height: 6px; border-radius: 50%; background: #F5C400; }
+@media (max-width: 600px) { .week-next .wk-art { width: 150px; opacity: .1; } .wk-prog { max-width: none; } }

@@ -451,6 +451,31 @@
     try { return new Intl.DateTimeFormat(loc(), { day: 'numeric', month: 'long', year: 'numeric' }).formatRange(new Date(`${x.start}T12:00:00`), new Date(`${x.end}T12:00:00`)); } catch { return dateLong(x.start); }
   }
   const sessionPlace = (x) => [x.loc ? t('locName')[x.loc] || x.loc : '', x.start === x.end || (new Date(x.end) - new Date(x.start)) / 864e5 < 2 ? t('miniSession') : ''].filter(Boolean).join(' · ');
+  // silhouettes discrètes des deux hémicycles, en traits fins, dans la carte « prochaine session »
+  const SITE_ART = {
+    // Strasbourg : la tour elliptique du bâtiment Louise-Weiss, au sommet volontairement inachevé, et son aile basse
+    SXB: `<svg class="wk-art" viewBox="0 0 260 190" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round">
+      <path d="M96 186V62M188 186V40"/>
+      <path d="M96 62c10 7 27 11 46 11s34-5 46-12"/>
+      <path d="M96 62c4-9 18-16 38-18"/>
+      <path d="M188 40c-6-6-18-10-32-12l-4 16"/>
+      <path d="M96 86h92M96 110h92M96 134h92M96 158h92" opacity=".55"/>
+      <path d="M112 66v120M128 68v118M144 68v118M160 67v119M176 64v122" opacity=".35"/>
+      <path d="M8 186V140h88M188 150h64v36"/>
+      <path d="M8 160h88M188 168h64" opacity=".55"/>
+      <path d="M2 186h256"/>
+    </g></svg>`,
+    // Bruxelles : le bâtiment Paul-Henri Spaak et sa grande verrière en voûte
+    BRU: `<svg class="wk-art" viewBox="0 0 260 190" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round">
+      <path d="M40 120c0-44 40-74 90-74s90 30 90 74"/>
+      <path d="M58 120c0-34 32-58 72-58s72 24 72 58" opacity=".55"/>
+      <path d="M130 46v74M100 52l-12 68M160 52l12 68M74 66l-22 54M186 66l22 54" opacity=".35"/>
+      <path d="M10 186V120h240v66"/>
+      <path d="M10 140h240M10 162h240" opacity=".55"/>
+      <path d="M40 120v66M70 120v66M100 120v66M130 120v66M160 120v66M190 120v66M220 120v66" opacity=".35"/>
+      <path d="M2 186h256"/>
+    </g></svg>`,
+  };
   function sessionWhen(x) {
     const now = todayISO();
     if (x.start === now) return t('agendaToday');
@@ -1818,6 +1843,8 @@
           <p class="wk-place"><i class="k-${(calKind(x, (new Date(x.end) - new Date(x.start)) / 864e5)).toLowerCase()}"></i>${esc(sessionPlace(x) || '')}</p>
           <p class="wk-s">${x.days ? t('agendaSummary', votes.length, debates.length) : t('weekNoAgenda')}</p>
           ${th.length ? `<div class="wk-th">${th.map(([id]) => `<a class="tag" href="#/theme/${id}">${esc(thName(id))}</a>`).join('')}</div>` : ''}
+          ${(votes.length || debates.length) ? `<div class="wk-prog"><p class="wk-k">${t('weekProgram')}</p><ul>${(votes.length ? votes : debates).slice(0, 3).map((it) => `<li>${esc(itemTitle(it))}</li>`).join('')}</ul></div>` : ''}
+          ${SITE_ART[x.loc] || ''}
           <p class="wk-links"><a class="btn primary" href="#/sessions?s=prochaine">${t('seeAgenda')}</a><a class="more" href="#/sessions?s=calendrier">${t('hubCal')}</a></p>`;
       });
     }
