@@ -1570,6 +1570,7 @@ html.has-stats .no-stats { display: none; }
 @keyframes qzIn { from { opacity: 0; transform: translateX(24px); } }
 .qz-meta { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 .qz-q-k { margin: 22px 0 6px; color: var(--muted); font-weight: 600; }
+.qz-hint { margin: 10px 0 0; padding: 8px 12px; border-left: 3px solid var(--accent); background: var(--soft, rgba(31,67,200,.06)); font-size: 15px; }
 .qz-q { margin: 0; font: 800 clamp(24px, 3vw, 38px)/1.2 var(--f-serif); letter-spacing: -.02em; text-wrap: balance; }
 .qz-more { margin-top: 16px; color: var(--ink-2); }
 .qz-more summary { cursor: pointer; font-weight: 600; color: var(--accent); }

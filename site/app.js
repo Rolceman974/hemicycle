@@ -3214,9 +3214,10 @@
   }
 
   /* ================================================================ Qui me ressemble ? (quiz) */
-  // sélection automatique : votes finaux récents, compréhensibles (résumé en langage courant), qui divisent vraiment
-  // les groupes, un seul vote par texte, en alternant les thèmes
-  function quizPool() {
+  // sélection automatique : votes finaux récents et compréhensibles (résumé en langage courant), qui séparent
+  // vraiment les groupes politiques entre eux (quiz.json : voix de chaque groupe), un seul vote par texte,
+  // sans répéter dix fois le même clivage, en alternant les thèmes
+  function quizPool(GQ = {}) {
     const cand = [];
     for (const v of D.votes) {
       if (!v.mn || !v.tp) continue;
@@ -3225,28 +3226,60 @@
       const [f, a] = v.c;
       if (f + a < 300) continue;
       const share = f / (f + a);
-      if (share > 0.88 || share < 0.12) continue; // trop consensuel : n'apprend rien
+      if (share > 0.93 || share < 0.07) continue; // quasi unanime : n'apprend rien
       const kind = EX.kind(v).k;
-      if (['agenda', 'urgency', 'referral', 'postpone', 'voteAms', 'amend', 'split', 'part', 'oral', 'budgetLine'].includes(kind)) continue;
-      const div = 1 - Math.abs(share - 0.5) * 2;
-      const law = v.ty === 'COD' ? 0.25 : 0;
+      if (['agenda', 'urgency', 'referral', 'postpone', 'voteAms', 'amend', 'split', 'part', 'oral', 'budgetLine', 'reject'].includes(kind)) continue;
+      const law = v.ty === 'COD' ? 0.2 : 0;
       const age = (Date.now() - new Date(v.t)) / (365 * 864e5);
-      cand.push({ v, th, score: div + law - age * 0.12 });
+      const g = GQ[v.id];
+      let info, pat = '';
+      if (g) {
+        // position de chaque groupe (hors non-inscrits) et poids en sièges
+        let sF = 0, sA = 0, top = 0, tot = 0;
+        for (const k of GROUP_ORDER) {
+          const n = g[k], m = n ? n[0] + n[1] + n[2] : 0;
+          if (k === 'NI' || !m) { pat += '-'; continue; }
+          const mx = Math.max(n[0], n[1], n[2]), p = 'FAX'[n.indexOf(mx)];
+          pat += p; top += mx; tot += m;
+          if (p === 'F') sF += m; else if (p === 'A') sA += m;
+        }
+        const between = sF + sA ? 1 - Math.abs(sF - sA) / (sF + sA) : 0; // 1 = les groupes se partagent à parts égales
+        const cohesion = tot ? top / tot : 0; // chaque groupe vote-t-il d'une seule voix ?
+        info = between * 0.8 + (cohesion - 0.6) * 1.2;
+      } else info = 1 - Math.abs(share - 0.5) * 2;
+      // textes marquants (explication détaillée, forte participation) plutôt que rapports annuels et points techniques
+      const keyV = (v.dt ? 0.25 : 0) + ((v.c[0] + v.c[1] + v.c[2]) / 720 - 0.85) * 0.8;
+      const routine = /rapport annuel|annual report|jaarverslag|groupe d’experts|transposition/i.test(v.tp.join(' ')) ? 0.3 : 0;
+      cand.push({ v, th, pat, score: info + law + keyV - routine - age * 0.1 });
     }
     cand.sort((x, y) => y.score - x.score || y.v.t.localeCompare(x.v.t));
-    // un texte (procédure) une seule fois, puis les thèmes à tour de rôle
-    const seen = new Set(), byTh = new Map();
+    // un texte (procédure) une seule fois ; un clivage déjà vu plusieurs fois perd des points
+    const seen = new Set(), chosen = [], left = [];
+    // deux clivages se ressemblent quand au plus un groupe change de camp
+    const near = (p, q) => { let d = 0; for (let i = 0; i < p.length; i++) if (p[i] !== '-' && q[i] !== '-' && p[i] !== q[i]) d++; return d <= 1; };
     for (const c of cand) {
       const key = c.v.pr || c.v.tp[0];
       if (seen.has(key)) continue;
-      seen.add(key);
-      const th = c.th[0];
-      if (!byTh.has(th)) byTh.set(th, []);
-      byTh.get(th).push(c);
+      seen.add(key); left.push(c);
     }
+    const ordered = [];
+    while (left.length) {
+      let bi = 0, bs = -Infinity;
+      for (let i = 0; i < left.length; i++) {
+        const p = left[i].pat;
+        const s = left[i].score - (p ? 0.1 * chosen.filter((q) => near(p, q)).length : 0);
+        if (s > bs) { bs = s; bi = i; }
+      }
+      const c = left.splice(bi, 1)[0];
+      if (c.pat) chosen.push(c.pat);
+      ordered.push(c);
+    }
+    // puis les thèmes à tour de rôle
+    const byTh = new Map();
+    for (const c of ordered) { const th = c.th[0]; if (!byTh.has(th)) byTh.set(th, []); byTh.get(th).push(c); }
     const out = [];
-    const lists = [...byTh.values()].sort((a, b) => b[0].score - a[0].score);
-    for (let r = 0; out.length < cand.length && r < 40; r++) for (const l of lists) if (l[r]) out.push(l[r]);
+    const lists = [...byTh.values()];
+    for (let r = 0; out.length < ordered.length && r < 60; r++) for (const l of lists) if (l[r]) out.push(l[r]);
     return out;
   }
   const QZ_KEY = 'hemi-quiz';
@@ -3263,9 +3296,9 @@
   async function pageQuiz(my, q) {
     setNav(''); setTitle(t('qzTitle'));
     if (!keepScroll) main.innerHTML = `<p class="loading">${t('loadingVotes')}</p>`;
-    await loadVotes();
+    const [, GQ] = await Promise.all([loadVotes(), getJSON(`${D.base}quiz.json`).catch(() => ({}))]);
     if (my !== token) return;
-    const pool = quizPool();
+    const pool = quizPool(GQ);
     const byId = new Map(pool.map((c) => [c.v.id, c]));
     // résultat partagé : #/quiz?r=ids~réponses~importance
     const shared = q.get('r');
@@ -3285,8 +3318,13 @@
       qzSave(st); draw();
     };
     const prefetch = () => Promise.all(st.ids.map((id) => voteFile(id).catch(() => null)));
+    // chaque écran du test remplace le précédent sans changer d'adresse : on retire les écouteurs de l'écran
+    // précédent, sinon un clic sur la question 5 répondait aussi aux questions 1 à 4
+    const base = handlers.length;
+    const clearScreen = () => handlers.splice(base).forEach((f) => f());
 
     function intro() {
+      clearScreen();
       const saved = qzLoad();
       const can = saved && !saved.done && saved.ans.some(Boolean);
       main.innerHTML = `
@@ -3329,6 +3367,7 @@
     }
 
     async function question() {
+      clearScreen();
       const i = st.i, id = st.ids[i], c = byId.get(id) || { v: D.vById.get(id), th: themesOf(D.vById.get(id)) };
       const v = c.v;
       const L = EX[lang], K = EX.kind(v);
@@ -3344,6 +3383,7 @@
           <div class="qz-meta">${c.th.map((x) => `<span class="tag">${esc(thName(x))}</span>`).join('')}<span class="small muted">${esc(nature)} · ${esc(dateLong(v.t))}</span></div>
           <p class="qz-q-k">${t('qzAsk')}</p>
           <h1 class="qz-q">${esc(cap(topicOf(v)))}</h1>
+          ${K.k === 'objection' ? `<p class="qz-hint">${t('qzObjHint')}</p>` : ''}
           <details class="qz-more"><summary>${t('qzMore')}</summary><p>${esc(tiOf(v))}</p>${explainVote(v, null).replace(/<p class="ex-out[\s\S]*?<\/p>/, '')}</details>
           <div class="qz-answers" role="group" aria-label="${esc(t('qzYour'))}">
             ${[['F', 'qzFor'], ['A', 'qzAgainst'], ['X', 'qzAbst']].map(([k, l]) => `<button type="button" class="qz-a qz-${k}" data-ans="${k}" aria-pressed="${answered === k}"><span class="qz-ic"></span>${t(l)}</button>`).join('')}
@@ -3368,6 +3408,7 @@
       on(main, 'click', '[data-qz-finish]', () => { st.done = true; qzSave(st); results(); });
       on(main, 'click', '[data-ans]', async (e, b) => {
         const a = b.dataset.ans;
+        if ($('#qz-card').classList.contains('out')) return; // double clic : ne pas sauter la question suivante
         st.ans[i] = a; qzSave(st);
         $$('.qz-a', main).forEach((x) => x.setAttribute('aria-pressed', String(x.dataset.ans === a)));
         if (!st.reveal || a === 'S') { $('#qz-card').classList.add('out'); setTimeout(next, reduceMotion() ? 0 : 220); return; }
@@ -3399,29 +3440,34 @@
     }
 
     async function results() {
+      clearScreen();
       main.innerHTML = `<p class="loading">${t('qzComputing')}</p>`;
       const files = await Promise.all(st.ids.map((id) => voteFile(id).catch(() => null)));
       if (my !== token) return;
       const Q = st.ids.map((id, k) => ({ v: D.vById.get(id), f: files[k], a: st.ans[k], w: st.imp[k] ? 2 : 1 })).filter((x) => x.v && x.f && x.a && x.a !== 'S');
       const score = (mine, theirs) => (theirs === mine ? 1 : theirs === 'X' || mine === 'X' ? 0.5 : 0);
       // eurodéputés
+      // accord avec un ensemble de députés (groupe, parti) = part de ses voix qui rejoignent la vôtre :
+      // un groupe divisé à 55/45 compte pour 55 %, pas pour 100 %
+      const agreeN = (mine, n) => { const m = n[0] + n[1] + n[2]; return m ? (n[0] * score(mine, 'F') + n[1] * score(mine, 'A') + n[2] * score(mine, 'X')) / m : null; };
       const mepScore = D.members.map((m, idx) => {
         let s = 0, w = 0, n = 0;
         for (const x of Q) { const p = (x.f.p[idx] || '.').toUpperCase(); if ('FAX'.includes(p)) { s += score(x.a, p) * x.w; w += x.w; n++; } }
-        return { m, s: w ? s / w : null, n };
+        // classement : le score est un peu tiré vers 50 % quand il repose sur peu de votes communs
+        return { m, s: w ? s / w : null, n, k: w ? (s + 1) / (w + 2) : 0 };
       }).filter((x) => x.m.a && x.n >= Math.max(2, Q.length * 0.5));
       // groupes : position majoritaire de chaque groupe
       const gm = (n) => { const top = Math.max(n[0], n[1], n[2]); return [n[0], n[1], n[2]].filter((x) => x === top).length > 1 ? null : 'FAX'[[n[0], n[1], n[2]].indexOf(top)]; };
       const gAgg = new Map();
       const thAgg = new Map();
       for (const x of Q) for (const [g, n] of Object.entries(x.f.g)) {
-        const p = gm(n); if (!p) continue;
+        const sc = agreeN(x.a, n); if (sc == null) continue;
         if (!gAgg.has(g)) gAgg.set(g, [0, 0]);
-        const a = gAgg.get(g); a[0] += score(x.a, p) * x.w; a[1] += x.w;
+        const a = gAgg.get(g); a[0] += sc * x.w; a[1] += x.w;
         for (const th of themesOf(x.v)) {
           if (!thAgg.has(th)) thAgg.set(th, new Map());
           const tm = thAgg.get(th); if (!tm.has(g)) tm.set(g, [0, 0]);
-          const b = tm.get(g); b[0] += score(x.a, p) * x.w; b[1] += x.w;
+          const b = tm.get(g); b[0] += sc * x.w; b[1] += x.w;
         }
       }
       const groups = [...gAgg].filter(([g, a]) => a[1] && D.members.some((m) => m.a && m.g === g)).map(([g, a]) => ({ g, s: a[0] / a[1] })).sort((a, b) => b.s - a.s);
@@ -3433,14 +3479,14 @@
         for (const x of Q) {
           const n = [0, 0, 0];
           for (const idx of P.idx) { const k = 'FAX'.indexOf((x.f.p[idx] || '.').toUpperCase()); if (k >= 0) n[k]++; }
-          const p = n[0] + n[1] + n[2] ? gm(n) : null;
-          if (p) { s += score(x.a, p) * x.w; w += x.w; }
+          const sc = agreeN(x.a, n);
+          if (sc != null) { s += sc * x.w; w += x.w; }
         }
         return { ...P, s: w ? s / w : null, w };
       }).filter((x) => x.s != null && x.w >= Q.reduce((a, x2) => a + x2.w, 0) * 0.5);
       parties.sort((a, b) => b.s - a.s);
       const mineC = parties.filter((x) => x.c === st.country);
-      const meps = mepScore.slice().sort((a, b) => b.s - a.s);
+      const meps = mepScore.slice().sort((a, b) => b.k - a.k || b.n - a.n);
       const myMeps = meps.filter((x) => x.m.c === st.country);
       const top = groups[0];
       const shareR = `${st.ids.join('-')}~${st.ids.map((_, k) => st.ans[k] || 'S').join('')}~${st.imp.map((x) => (x ? 1 : 0)).join('')}`;

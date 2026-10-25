@@ -42,6 +42,7 @@ jobs:
           node scripts/build-data.js export site/data/t9 --term 9 --main-only
           node scripts/build-extra.js site/data
           node scripts/build-extra.js site/data/t9
+          node scripts/build-quiz.js site/data
 
       # prochaines sessions et ordre du jour provisoire (en cas d'échec, l'ancien fichier est conservé)
       - name: Mettre à jour l'agenda des sessions plénières
