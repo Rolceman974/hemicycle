@@ -1135,10 +1135,10 @@
         wikidata: val('item'), article: wl ? wikis[wl] : null, lang: wl,
         pos: [], edu: [], job: [], party: [], ideo: [], langs: [], sections: null,
       };
-      const lists = await sparql(`SELECT ?kind ?valLabel ?start ?end ?degLabel WHERE {
+      const lists = await sparql(`SELECT ?kind ?valLabel ?start ?end ?degLabel ?degEn WHERE {
         ?item wdt:P1186 "${eid}" .
         { ?item p:P39 ?st . ?st ps:P39 ?val . BIND("pos" AS ?kind) OPTIONAL { ?st pq:P580 ?start } OPTIONAL { ?st pq:P582 ?end } }
-        UNION { ?item p:P69 ?st . ?st ps:P69 ?val . BIND("edu" AS ?kind) OPTIONAL { ?st pq:P580 ?start } OPTIONAL { ?st pq:P582 ?end } OPTIONAL { ?st pq:P512 ?deg } }
+        UNION { ?item p:P69 ?st . ?st ps:P69 ?val . BIND("edu" AS ?kind) OPTIONAL { ?st pq:P580 ?start } OPTIONAL { ?st pq:P582 ?end } OPTIONAL { ?st pq:P512 ?deg . OPTIONAL { ?deg rdfs:label ?degEn FILTER(LANG(?degEn) = "en") } } }
         UNION { ?item wdt:P106 ?val . BIND("job" AS ?kind) }
         UNION { ?item p:P102 ?st . ?st ps:P102 ?val . BIND("party" AS ?kind) OPTIONAL { ?st pq:P580 ?start } OPTIONAL { ?st pq:P582 ?end } }
         UNION { ?item wdt:P102 ?pty . ?pty wdt:P1142 ?val . BIND("ideo" AS ?kind) }
@@ -1149,7 +1149,7 @@
       for (const b of lists) {
         const kind = b.kind.value, label = b.valLabel && b.valLabel.value;
         if (!label || /^Q\d+$/.test(label)) continue;
-        const item = { label, start: b.start ? b.start.value.slice(0, 4) : null, end: b.end ? b.end.value.slice(0, 4) : null, deg: b.degLabel && !/^Q\d+$/.test(b.degLabel.value) ? b.degLabel.value : null };
+        const item = { label, start: b.start ? b.start.value.slice(0, 4) : null, end: b.end ? b.end.value.slice(0, 4) : null, deg: degName(b.degEn && b.degEn.value, b.degLabel && !/^Q\d+$/.test(b.degLabel.value) ? b.degLabel.value : null) };
         const key = `${kind}|${label}|${item.start}|${item.end}`;
         if (seen.has(key) || !bio[kind]) continue;
         seen.add(key); bio[kind].push(item);
@@ -1168,6 +1168,31 @@
     bioCache.set(ck, p);
     p.catch(() => bioCache.delete(ck));
     return p;
+  }
+
+  // diplômes : les libellés de Wikidata sont souvent mal traduits (« baccalauréat des arts » pour Bachelor of Arts) ;
+  // on reconnaît les grands types de diplômes à partir du libellé anglais et on les nomme simplement
+  const DEG = {
+    fr: { ba: 'Bachelier (lettres, sciences humaines)', bsc: 'Bachelier (sciences)', bach: 'Bachelier', ma: 'Master (lettres, sciences humaines)', msc: 'Master (sciences)', llm: 'Master en droit', llb: 'Bachelier en droit', mba: 'MBA (gestion)', master: 'Master', phd: 'Doctorat', md: 'Doctorat en médecine', dipl: 'Diplôme' },
+    nl: { ba: 'Bachelor (letteren, menswetenschappen)', bsc: 'Bachelor (wetenschappen)', bach: 'Bachelor', ma: 'Master (letteren, menswetenschappen)', msc: 'Master (wetenschappen)', llm: 'Master in de rechten', llb: 'Bachelor in de rechten', mba: 'MBA (bedrijfskunde)', master: 'Master', phd: 'Doctoraat', md: 'Doctor in de geneeskunde', dipl: 'Diploma' },
+  };
+  function degName(en, local) {
+    if (lang === 'en') return en || local;
+    const D = DEG[lang] || DEG.fr, x = (en || '').toLowerCase();
+    const k = !x ? null
+      : /master of laws|\bllm\b|ll\.m/.test(x) ? 'llm'
+      : /bachelor of laws|\bllb\b|ll\.b/.test(x) ? 'llb'
+      : /business administration|\bmba\b/.test(x) ? 'mba'
+      : /doctor of medicine|\bm\.?d\.?\b/.test(x) ? 'md'
+      : /doctor|ph\.?\s?d|doctorate|habilitation/.test(x) ? 'phd'
+      : /master of arts|\bm\.?a\.?\b/.test(x) ? 'ma'
+      : /master of science|\bm\.?sc\b/.test(x) ? 'msc'
+      : /master|magister|licentiate|candidate of sciences/.test(x) ? 'master'
+      : /bachelor of arts|\bb\.?a\.?\b/.test(x) ? 'ba'
+      : /bachelor of science|\bb\.?sc\b/.test(x) ? 'bsc'
+      : /bachelor|baccalaureate/.test(x) ? 'bach'
+      : /diploma|degree/.test(x) ? 'dipl' : null;
+    return k ? D[k] : local;
   }
 
   const SKIP_SECTION = /^(notes?|références|sources|voir aussi|liens externes|bibliographie|annexes|publications|ouvrages|œuvres|filmographie|résultats électoraux|historique électoral|references|see also|external links|further reading|bibliography|electoral history|works|notes and references|bronnen|externe links|zie ook|literatuur|noten|referenties|publicaties|bibliografie)/i;
