@@ -41,8 +41,11 @@ const clip = (s, n) => (s.length > n ? `${s.slice(0, n - 1).replace(/\s+\S*$/, '
 const write = (file, content) => { fs.mkdirSync(path.dirname(file), { recursive: true }); fs.writeFileSync(file, content); };
 const json = (f) => JSON.parse(fs.readFileSync(f, 'utf8'));
 const rssDate = (t) => new Date(`${t}${/Z|[+-]\d\d:?\d\d$/.test(t) ? '' : 'Z'}`).toUTCString();
+// mise en page lisible quand un flux est ouvert dans un navigateur (site/feed.xsl)
+const XSL = `${SITE_URL ? new URL(SITE_URL).pathname.replace(/\/$/, '') : ''}/feed.xsl`;
 function rss({ title, link, desc, items }) {
   return `<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="${XSL}"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel>
   <title>${esc(title)}</title><link>${esc(link)}</link><description>${esc(desc)}</description><language>en</language>
 ${items.map((it) => `  <item><title>${esc(it.title)}</title><link>${esc(it.link)}</link><guid isPermaLink="true">${esc(it.link)}</guid><pubDate>${rssDate(it.date)}</pubDate><description>${esc(it.desc)}</description></item>`).join('\n')}
