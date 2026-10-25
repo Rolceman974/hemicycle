@@ -1749,3 +1749,4 @@ details[open] > :not(summary) { animation: rise .28s cubic-bezier(.2, .7, .2, 1)
 .btn.report { color: var(--muted); }
 .btn.report:hover { color: var(--ink); }
 .btn.report svg { flex: none; }
+.vrow .vt-k { color: var(--muted); font-weight: 600; }

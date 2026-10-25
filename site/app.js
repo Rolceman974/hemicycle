@@ -521,8 +521,8 @@
     const r = resultOf(v);
     return `<a class="vrow" href="#/${TP()}vote/${v.id}">
       <div class="vd"><b>${esc(new Date(v.t).toLocaleDateString(loc(), { day: 'numeric', month: 'short' }))}</b>${new Date(v.t).getFullYear()}</div>
-      <div><div class="vt">${esc(tiOf(v))}</div>${extraTopic(v) ? `<div class="vtp">${esc(cap(extraTopic(v)))}</div>` : ''}
-        <div class="vs">${v.dt && v.mn ? `<span class="tag tag-dt">${t('detailedTag')}</span>` : ''}${shortLabel(v) ? `<span>${esc(shortLabel(v))}</span>` : ''}${extra}</div></div>
+      <div><div class="vt">${EX.kind(v).k === 'reject' ? `<span class="vt-k">${esc(EX[lang].short.reject)}${lang === 'fr' ? ' :' : ':'}</span> ` : ''}${esc(tiOf(v))}</div>${extraTopic(v) ? `<div class="vtp">${esc(cap(extraTopic(v)))}</div>` : ''}
+        <div class="vs">${v.dt && v.mn ? `<span class="tag tag-dt">${t('detailedTag')}</span>` : ''}${shortLabel(v) && EX.kind(v).k !== 'reject' ? `<span>${esc(shortLabel(v))}</span>` : ''}${extra}</div></div>
       <div class="vr"><span class="res ${r}">${resName(r)}</span>${bar([v.c[0], v.c[1], v.c[2]])}<span class="small muted">${v.c[0]} – ${v.c[1]} – ${v.c[2]}</span></div>
     </a>`;
   }
@@ -1680,7 +1680,9 @@
     const fromDay = lastDay ? new Date(new Date(lastDay) - 4 * 864e5).toISOString().slice(0, 10) : '';
     const session = D.votes.filter((v) => v.t.slice(0, 10) >= fromDay);
     const sFinal = session.filter((v) => v.mn);
-    const latest = (sFinal.length >= 3 ? sFinal : D.votes.filter((v) => v.mn)).slice(0, 6);
+    // « dernières décisions » : les textes eux-mêmes, sans les demandes de rejet qui les précèdent (sinon le même texte apparaît deux fois)
+    const notReject = (v) => EX.kind(v).k !== 'reject';
+    const latest = (sFinal.filter(notReject).length >= 3 ? sFinal.filter(notReject) : D.votes.filter((v) => v.mn && notReject(v))).slice(0, 6);
     const sFirst = session.length ? session[session.length - 1].t : lastDay;
     let sDates = '';
     try { sDates = new Intl.DateTimeFormat(loc(), { day: 'numeric', month: 'long', year: 'numeric' }).formatRange(new Date(sFirst), new Date(lastDay)); } catch { sDates = dateLong(lastDay); }
