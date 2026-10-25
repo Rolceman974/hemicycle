@@ -1251,7 +1251,6 @@ a.cal-d.today:not(.past)::after { box-shadow: 0 0 0 2px var(--k-ink); }
 .my-p small { color: var(--muted); font-size: 13px; }
 .my-n { font-weight: 700; font-variant-numeric: tabular-nums; }
 .my-links { display: flex; flex-wrap: wrap; gap: 10px; margin: 16px 0 0; }
-.week-dec .vs { display: none; }
 .week-dec .vrow { padding-block: 12px; }
 .week-dec .vrow:last-child { border-bottom: 0; }
 @media (max-width: 600px) {
