@@ -36,7 +36,7 @@ window.HEMI_ABOUT = {
           <li><b>Photos des eurodéputés</b> : © Union européenne, source : Parlement européen.</li>
           <li><b>Biographies et présentation des partis</b> : Wikipédia (CC BY-SA 4.0) et Wikidata (CC0).</li>
           <li><b>Législatures 1979–2019</b> : jeu de données « meps » d’E. Persson et al. (licence MIT).</li>
-          <li><b>Carte</b> : Natural Earth (domaine public). <b>Police</b> : Manrope (SIL Open Font License).</li>
+          <li><b>Carte</b> : Natural Earth (domaine public). <b>Polices</b> : Manrope et Newsreader (SIL Open Font License).</li>
         </ul>` },
       { id: 'limites', t: 'Limites', h: `
         <p>Hemicycle n’est pas une source officielle. Malgré le soin apporté, les données peuvent contenir des erreurs ou des retards, et les explications automatiques simplifient forcément des textes complexes. Les intitulés des votes sont publiés en anglais par le Parlement ; leurs traductions en français et en néerlandais sont réalisées par Hemicycle et n’ont pas de valeur officielle (l’intitulé anglais reste indiqué sur chaque page de vote). Pour toute référence officielle, consultez le site du Parlement européen, dont chaque page de vote donne le lien.</p>` },
@@ -76,7 +76,7 @@ window.HEMI_ABOUT = {
           <li><b>MEP photos</b>: © European Union, source: European Parliament.</li>
           <li><b>Biographies and party profiles</b>: Wikipedia (CC BY-SA 4.0) and Wikidata (CC0).</li>
           <li><b>1979–2019 terms</b>: the “meps” dataset by E. Persson et al. (MIT licence).</li>
-          <li><b>Map</b>: Natural Earth (public domain). <b>Typeface</b>: Manrope (SIL Open Font License).</li>
+          <li><b>Map</b>: Natural Earth (public domain). <b>Typefaces</b>: Manrope and Newsreader (SIL Open Font License).</li>
         </ul>` },
       { id: 'limites', t: 'Limitations', h: `
         <p>Hemicycle is not an official source. Despite our care, the data may contain errors or delays, and automatic explanations necessarily simplify complex texts. Vote titles are published in English by Parliament; the French and Dutch translations are made by Hemicycle and have no official value. For any official reference, see the European Parliament website, linked from every vote page.</p>` },
@@ -116,7 +116,7 @@ window.HEMI_ABOUT = {
           <li><b>Foto’s</b>: © Europese Unie, bron: Europees Parlement.</li>
           <li><b>Biografieën en partijprofielen</b>: Wikipedia (CC BY-SA 4.0) en Wikidata (CC0).</li>
           <li><b>Zittingsperiodes 1979–2019</b>: dataset “meps” van E. Persson e.a. (MIT-licentie).</li>
-          <li><b>Kaart</b>: Natural Earth (publiek domein). <b>Lettertype</b>: Manrope (SIL Open Font License).</li>
+          <li><b>Kaart</b>: Natural Earth (publiek domein). <b>Lettertypes</b>: Manrope en Newsreader (SIL Open Font License).</li>
         </ul>` },
       { id: 'limites', t: 'Beperkingen', h: `
         <p>Hemicycle is geen officiële bron. Ondanks alle zorg kunnen de gegevens fouten of vertraging bevatten, en automatische uitleg vereenvoudigt noodzakelijkerwijs complexe teksten. Het Parlement publiceert de titels van de stemmingen in het Engels; de Nederlandse en Franse vertalingen zijn van Hemicycle en hebben geen officiële waarde (de Engelse titel blijft op elke stemmingspagina vermeld). Voor een officiële referentie: de website van het Europees Parlement, gelinkt op elke stemmingspagina.</p>` },
