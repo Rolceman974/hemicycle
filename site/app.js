@@ -1541,8 +1541,6 @@
       PS.tab = id;
       panels.forEach((p) => { p.hidden = p.id !== id; });
       btns.forEach((b) => { const onIt = b.dataset.tabGo === id; b.setAttribute('aria-selected', String(onIt)); b.tabIndex = onIt ? 0 : -1; if (onIt) { placeInk(b); if (focus) b.focus(); } });
-      const p = panels.find((x) => x.id === id);
-      $$('[data-count]', p).forEach(countUp);
     };
     on(bar, 'click', '[data-tab-go]', (e, b) => show(b.dataset.tabGo));
     on(bar, 'keydown', '[data-tab-go]', (e, b) => {
@@ -1617,7 +1615,7 @@
     }
   }
 
-  // apparition en douceur des blocs sous la ligne de flottaison, et chiffres qui défilent jusqu'à leur valeur
+  // blocs sous la ligne de flottaison : le contenu est affiché d'emblée, seules les barres de données se dessinent à leur arrivée à l'écran
   let revealList = [], revealRaf = 0;
   function revealCheck() {
     revealRaf = 0;
@@ -1626,12 +1624,11 @@
       if (!el.isConnected) return false;
       if (el.getBoundingClientRect().top > lim) return true;
       el.classList.add('in');
-      $$('[data-count]', el).forEach(countUp);
       return false;
     });
   }
   const revealSoon = () => { if (revealList.length && !revealRaf) revealRaf = requestAnimationFrame(revealCheck); };
-  const revealNow = (el) => { if (!el.classList.contains('rv') || el.classList.contains('in')) return; el.classList.add('in'); $$('[data-count]', el).forEach(countUp); revealList = revealList.filter((x) => x !== el); };
+  const revealNow = (el) => { if (!el.classList.contains('rv') || el.classList.contains('in')) return; el.classList.add('in'); revealList = revealList.filter((x) => x !== el); };
   // filet de sécurité : quand la page est affichée dans un cadre (aperçu, intégration) le défilement se fait parfois hors de la page,
   // sans événement « scroll » : l'IntersectionObserver voit quand même le bloc arriver à l'écran
   const revealIO = 'IntersectionObserver' in window ? new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { revealNow(e.target); revealIO.unobserve(e.target); } }), { rootMargin: '0px 0px -4% 0px' }) : null;
@@ -1649,32 +1646,6 @@
       revealList.push(el);
       if (revealIO) revealIO.observe(el);
     }
-    // chiffres déjà visibles
-    $$('.kpi .val, .stage-figures .fig b, .tally b', main).forEach((el) => {
-      if (!/^\s*[\d\s\u202f\u00a0.,]+\s*%?\s*$/.test(el.textContent)) return;
-      el.dataset.count = '1';
-      if (!el.closest('.rv')) countUp(el);
-    });
-  }
-  function countUp(el) {
-    if (el.dataset.counted) return;
-    el.dataset.counted = '1';
-    const txt = el.textContent;
-    const m = /^(\s*)([\d\s\u202f\u00a0.,]*\d)(.*)$/.exec(txt);
-    if (!m) return;
-    const raw = m[2];
-    const dec = /[.,]\d{1,2}$/.test(raw) && !/[.,]\d{3}$/.test(raw) ? raw.split(/[.,]/).pop().length : 0;
-    const val = parseFloat(raw.replace(/[\s\u202f\u00a0]/g, '').replace(dec ? /[.,](?=\d{1,2}$)/ : /[.,]/g, dec ? '.' : '').replace(/,/g, ''));
-    if (!isFinite(val) || val < 2) return;
-    const nf = new Intl.NumberFormat(loc(), { minimumFractionDigits: dec, maximumFractionDigits: dec });
-    const t0 = performance.now(), dur = Math.min(1100, 500 + val * 2);
-    el.style.fontVariantNumeric = 'tabular-nums';
-    const step = (now) => {
-      const k = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - k, 3);
-      el.textContent = `${m[1]}${nf.format(val * e)}${m[3]}`;
-      if (k < 1) requestAnimationFrame(step); else el.textContent = txt;
-    };
-    requestAnimationFrame(step);
   }
   function notFound() {
     setNav(''); setTitle(t('notFound'));
